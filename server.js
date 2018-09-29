@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 //const db = require('./config/keys').mongoURI;
 const app = express();
 var bodyParser = require('body-parser')
-
+const passport = require('passport');
 //routes
 const users = require('./routes/api/users');
 const profile = require('./routes/api/profile');
@@ -32,6 +32,13 @@ app.use(bodyParser.json())
 //mongoose.connect(db)
 //    .then(()=> console.log("Connected to MongoDB"))
 //    .catch(err => console.log("ERROR FROM MONGODB: ", err));
+
+//passport Middleware
+
+app.use(passport.initialize());
+
+// passport config
+require('./config/passport')(passport);
 
 app.get('/', (req, res)=> res.send("Hello World!"));
 

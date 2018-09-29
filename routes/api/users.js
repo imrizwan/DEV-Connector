@@ -5,12 +5,26 @@ const gravatar = require('gravatar');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const keys = require('../../config/keys');
+const passport = require('passport');
+
+// load input validation
+
+const validateRegisterInput = require('../../validation/register');
 
 router.post('/register', (req, res)=> {
+
+    const { errors, isValid } = validateRegisterInput(req.body);
+
+    // check validation
+    if(!isValid){
+        return res.status(400).json(errors);
+    }
+
     User.findOne({ email: req.body.email }).
     then((user)=> {
         if(user){
-            return res.status(400).json({ email: 'Email Already Exist' });
+            errors.email = 'Email Already Exist'
+            return res.status(400).json(errors);
         } else {
             const avatar = gravatar.url(req.body.email, {
                 s: '200', //size
@@ -78,5 +92,12 @@ router.post('/login', (req, res)=> {
 });
 
 
+router.get('/current', passport.authenticate('jwt', { session: false }), (req, res)=> {
+    res.json({ 
+        id: req.user.id,
+        name: req.user.name,
+        email: req.user.email 
+    })
+});
 
 module.exports = router;
