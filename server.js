@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 //const db = require('./config/keys').mongoURI;
 const app = express();
+var bodyParser = require('body-parser')
 
 //routes
 const users = require('./routes/api/users');
@@ -9,7 +10,7 @@ const profile = require('./routes/api/profile');
 const posts = require('./routes/api/posts');
 
 //LOCAL
-mongoose.connect("mongodb://localhost:27017/olxdb", { useNewUrlParser: true });
+mongoose.connect("mongodb://localhost:27017/devcon", { useNewUrlParser: true });
 const db = mongoose.connection
 
 db.once('open', () => {
@@ -20,6 +21,12 @@ db.once('open', () => {
 db.on('error', (err) => {
   console.log(err);
 });
+
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }))
+ 
+// parse application/json
+app.use(bodyParser.json())
 
 //Online
 //mongoose.connect(db)
